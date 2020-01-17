@@ -9,14 +9,15 @@
 
 
 const request = require('request');
-const URL = 'https://api.ipify.org/?format=json';
+const URL_IPV4 = 'https://api.ipify.org/?format=json';
+const URL_GEO = 'https://ipvigilante.com/';
 
 
 
 
 const fetchMyIP = (callBack) => {
   // use request to fetch IP address from JSON API
-  request(URL, (error, response, body) => {
+  request(URL_IPV4, (error, response, body) => {
     if (error) {
       callBack(error, null);
       return;
@@ -37,6 +38,31 @@ const fetchMyIP = (callBack) => {
 };
 
 
+const fetchCoordsByIP = (ip, callBack) => {
+  const URLWithIP = URL_GEO + ip;
+  request(URLWithIP, (error, response, body) => {
+    if (error) {
+      callBack(error, null);
+      return;
+    }
+
+    if (response.statusCode !== 200) {
+      const msg = `Status Code ${response.statusCode} when fetching coordinates IP. Response: ${body}`;
+      callBack(Error(msg), null);
+      return;
+    }
+
+
+    const obj = JSON.parse(body);
+    //console.log(obj);
+    const coords = {lattitude: obj.data.latitude, longitude: obj.data.longitude};
+    callBack(null, coords);
+
+  });
+};
+
+
 module.exports = {
-  fetchMyIP
+  fetchMyIP,
+  fetchCoordsByIP
 };
