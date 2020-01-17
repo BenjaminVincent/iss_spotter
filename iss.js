@@ -101,13 +101,6 @@ const nextISSTimesForMyLocation = (callBack) => {
       })
     });
   });
-
-
-
-
-
-  
-
 };
 
 
